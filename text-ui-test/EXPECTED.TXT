@@ -3,7 +3,37 @@ What can I do for you?
 
 Event added: [E][ ] project meeting (from: Mon 2pm to: 4pm)
 
+Deadline added: [D][ ] return book (by: Snday)
+
 Deadline added: [D][ ] return book (by: Sunday)
 
 To-do added: [T][ ] borrow book
+
+Here are your tasks:
+1.[E][ ] project meeting (from: Mon 2pm to: 4pm)
+2.[D][ ] return book (by: Snday)
+3.[D][ ] return book (by: Sunday)
+4.[T][ ] borrow book
+
+Could not delete. Task number is required!
+
+Could not delete. Please check you've entered a number!
+
+Noted! I've removed:
+  [D][ ] return book (by: Snday)
+
+Here are your tasks:
+1.[E][ ] project meeting (from: Mon 2pm to: 4pm)
+2.[D][ ] return book (by: Sunday)
+3.[T][ ] borrow book
+
+Could not mark. Please check you've entered a number!
+
+Nice! I've marked this task as done:
+  [D][X] return book (by: Sunday)
+
+Here are your tasks:
+1.[E][ ] project meeting (from: Mon 2pm to: 4pm)
+2.[D][X] return book (by: Sunday)
+3.[T][ ] borrow book
 

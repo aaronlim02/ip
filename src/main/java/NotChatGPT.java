@@ -14,21 +14,50 @@ public class NotChatGPT {
             if (echo.equals("bye")) {
                 break;
             } else if (echo.equals("list")) {
+                System.out.println("Here are your tasks:");
                 for (int i = 0; i < tasklist.toArray().length; i++) {
                     System.out.println(i+1 + "." + tasklist.get(i).toString());
                 }
+            } else if (echo.substring(0, Math.min(echo.length(), 6)).equals("delete")) {
+                if (echo.length() < 8) {
+                    System.out.println("Could not delete. Task number is required!\n");
+                    continue;
+                }
+                try {
+                    int id = Integer.parseInt(echo.substring(7)) - 1;
+                    Task t = tasklist.remove(id);
+                    System.out.println("Noted! I've removed:");
+                    System.out.println("  " + t.toString());
+                } catch (NumberFormatException e) {
+                    System.out.println("Could not delete. Please check you've entered a number!");
+                }
             } else if (echo.substring(0, Math.min(echo.length(), 4)).equals("mark")) {
-                // change event status to 'X'
-                int id = Integer.parseInt(echo.substring(5)) - 1;
-                tasklist.get(id).setStatusIcon('X');
-                System.out.println("Nice! I've marked this task as done:");
-                System.out.println("  " + tasklist.get(id).toString());
+                if (echo.length() < 6) {
+                    System.out.println("Could not mark. Task number is required!\n");
+                    continue;
+                }
+                try {
+                    int id = Integer.parseInt(echo.substring(5)) - 1;
+                    tasklist.get(id).setStatusIcon('X');
+                    System.out.println("Nice! I've marked this task as done:");
+                    System.out.println("  " + tasklist.get(id).toString());
+                } catch (NumberFormatException e) {
+                    System.out.println("Could not mark. Please check you've entered a number!");
+                }
+
             } else if (echo.substring(0, Math.min(echo.length(), 6)).equals("unmark")) {
-                // change event status to ' '
-                int id = Integer.parseInt(echo.substring(7)) - 1;
-                tasklist.get(id).setStatusIcon(' ');
-                System.out.println("OK, I've marked this task as not done yet:");
-                System.out.println("  " + tasklist.get(id).toString());
+                if (echo.length() < 8) {
+                    System.out.println("Could not unmark. Please check you've entered a number!\n");
+                    continue;
+                }
+                try {
+                    int id = Integer.parseInt(echo.substring(7)) - 1;
+                    tasklist.get(id).setStatusIcon(' ');
+                    System.out.println("OK, I've marked this task as not done yet:");
+                    System.out.println("  " + tasklist.get(id).toString());
+                } catch (NumberFormatException e) {
+                    System.out.println("Could not unmark. Please enter a task number!");
+                }
             } else if (echo.substring(0, Math.min(echo.length(), 4)).equals("todo")) {
                 if (echo.length() < 6) {
                     System.out.println("Could not add To-do. Description is required!\n");
