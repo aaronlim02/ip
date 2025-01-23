@@ -30,20 +30,23 @@ public class NotChatGPT {
                 System.out.println("OK, I've marked this task as not done yet:");
                 System.out.println("  " + tasklist.get(id).toString());
             } else if (echo.substring(0, Math.min(echo.length(), 4)).equals("todo")) {
-                tasklist.add(new ToDo(echo.substring(5)));
-                System.out.println("To-do added: " + echo + '\n');
+                ToDo newToDo = new ToDo(echo.substring(5));
+                tasklist.add(newToDo);
+                System.out.println("To-do added: " + newToDo);
             } else if (echo.substring(0, Math.min(echo.length(), 8)).equals("deadline")) {
-                int endIndex = echo.indexOf("/by");
-                tasklist.add(new Deadline(echo.substring(9, endIndex),
-                    echo.substring(endIndex + 5)));
-                System.out.println("Deadline added: " + echo + '\n');
+                int byIndex = echo.indexOf("/by");
+                Deadline newDeadline = new Deadline(echo.substring(9, byIndex - 1),
+                    echo.substring(byIndex + 4));
+                tasklist.add(newDeadline);
+                System.out.println("Deadline added: " + newDeadline);
             } else if (echo.substring(0, Math.min(echo.length(), 5)).equals("event")) {
                 int fromIndex = echo.indexOf("/from");
                 int toIndex = echo.indexOf("/to");
-                tasklist.add(new Event(echo.substring(6, fromIndex),
+                Event newEvent = new Event(echo.substring(6, fromIndex - 1),
                     echo.substring(fromIndex + 6, toIndex),
-                    echo.substring(toIndex + 4)));
-                System.out.println("Event added: " + echo + '\n');
+                    echo.substring(toIndex + 4));
+                tasklist.add(newEvent);
+                System.out.println("Event added: " + newEvent);
             }
 
             System.out.println();

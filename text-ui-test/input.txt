@@ -1,0 +1,3 @@
+event project meeting /from Mon 2pm /to 4pm
+deadline return book /by Sunday
+todo borrow book
