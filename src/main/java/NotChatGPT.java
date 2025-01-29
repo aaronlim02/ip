@@ -1,5 +1,45 @@
+import java.io.IOException;
 import java.util.*;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 public class NotChatGPT {
+
+    public static void save(ArrayList<Task> tasklist) {
+        String filename = "data.txt";
+        String header = "Field1,Field2,Field3,Field4";
+        try {
+            BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
+            for (int i = 0; i < tasklist.size(); i++) {
+                Task task = tasklist.get(i);
+                String line = "";
+                if (task instanceof ToDo) {
+                    line = String.join(";",
+                        "T",
+                        task.description
+                    );
+                } else if (task instanceof Deadline d) {
+                  line = String.join(";",
+                        "D",
+                        d.description,
+                        d.by
+                    );
+                } else if (task instanceof Event e) {
+                  line = String.join(";",
+                        "E",
+                        e.description,
+                        e.from,
+                        e.to
+                    );
+                }
+                writer.write(line);
+                writer.newLine();
+            }
+            writer.flush();
+            System.out.println("Saved to disk.");
+        } catch (IOException e) {
+            System.out.println("Could not save to disk.");
+        }
+    }
 
     public static void main(String[] args) {
         ArrayList<Task> tasklist = new ArrayList<>();
@@ -28,6 +68,7 @@ public class NotChatGPT {
                     Task t = tasklist.remove(id);
                     System.out.println("Noted! I've removed:");
                     System.out.println("  " + t.toString());
+                    save(tasklist);
                 } catch (NumberFormatException e) {
                     System.out.println("Could not delete. Please check you've entered a number!");
                 }
@@ -66,6 +107,7 @@ public class NotChatGPT {
                 ToDo newToDo = new ToDo(echo.substring(5));
                 tasklist.add(newToDo);
                 System.out.println("To-do added: " + newToDo);
+                save(tasklist);
             } else if (echo.substring(0, Math.min(echo.length(), 8)).equals("deadline")) {
                 int byIndex = echo.indexOf("/by");
                 if (byIndex == -1) { // no /by
@@ -82,6 +124,7 @@ public class NotChatGPT {
                     echo.substring(byIndex + 4));
                 tasklist.add(newDeadline);
                 System.out.println("Deadline added: " + newDeadline);
+                save(tasklist);
             } else if (echo.substring(0, Math.min(echo.length(), 5)).equals("event")) {
                 int fromIndex = echo.indexOf("/from");
                 int toIndex = echo.indexOf("/to");
@@ -102,10 +145,11 @@ public class NotChatGPT {
                     continue;
                 }
                 Event newEvent = new Event(echo.substring(6, fromIndex - 1),
-                    echo.substring(fromIndex + 6, toIndex),
+                    echo.substring(fromIndex + 6, toIndex - 1),
                     echo.substring(toIndex + 4));
                 tasklist.add(newEvent);
                 System.out.println("Event added: " + newEvent);
+                save(tasklist);
             } else {
                 System.out.println("I don't understand");
             }
