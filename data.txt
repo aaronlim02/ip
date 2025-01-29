@@ -1,2 +1,1 @@
-[T][ ] qwe
-[E][ ] asd (from: 12 to: 34)
+T;qw

@@ -10,14 +10,27 @@ public class NotChatGPT {
         try {
             BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
             for (int i = 0; i < tasklist.size(); i++) {
-                /*
-                String line = String.join(";",
-                    task.getField1(),
-                    entry.getField2(),
-                    String.valueOf(entry.getField3()),
-                    String.valueOf(entry.getField4())
-                );*/
-                String line = tasklist.get(i).toString();
+                Task task = tasklist.get(i);
+                String line = "";
+                if (task instanceof ToDo) {
+                    line = String.join(";",
+                        "T",
+                        task.description
+                    );
+                } else if (task instanceof Deadline d) {
+                  line = String.join(";",
+                        "D",
+                        d.description,
+                        d.by
+                    );
+                } else if (task instanceof Event e) {
+                  line = String.join(";",
+                        "E",
+                        e.description,
+                        e.from,
+                        e.to
+                    );
+                }
                 writer.write(line);
                 writer.newLine();
             }
@@ -132,7 +145,7 @@ public class NotChatGPT {
                     continue;
                 }
                 Event newEvent = new Event(echo.substring(6, fromIndex - 1),
-                    echo.substring(fromIndex + 6, toIndex),
+                    echo.substring(fromIndex + 6, toIndex - 1),
                     echo.substring(toIndex + 4));
                 tasklist.add(newEvent);
                 System.out.println("Event added: " + newEvent);
