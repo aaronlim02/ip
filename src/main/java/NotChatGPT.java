@@ -2,11 +2,13 @@ import java.io.IOException;
 import java.util.*;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
+import java.io.BufferedReader;
+import java.io.FileReader;
 public class NotChatGPT {
 
+    static String filename = "data.txt";
+
     public static void save(ArrayList<Task> tasklist) {
-        String filename = "data.txt";
-        String header = "Field1,Field2,Field3,Field4";
         try {
             BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
             for (int i = 0; i < tasklist.size(); i++) {
@@ -41,8 +43,29 @@ public class NotChatGPT {
         }
     }
 
+    public static void load(ArrayList<Task> tasklist) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
+            String line;
+
+            while ((line = reader.readLine()) != null) {
+                String[] list = line.split(";");
+                if (list[0].equals("T")) {
+                    tasklist.add(new ToDo(list[1]));
+                } else if (list[0].equals("D")) {
+                    tasklist.add(new Deadline(list[1], list[2]));
+                } else if (list[0].equals("E")) {
+                    tasklist.add(new Event(list[1], list[2], list[3]));
+                }
+            }
+        } catch (IOException e) {
+            System.out.println("Error reading file.");
+            e.printStackTrace();
+        }
+    }
+
     public static void main(String[] args) {
         ArrayList<Task> tasklist = new ArrayList<>();
+        load(tasklist);
         String name = "Not ChatGPT";
         Scanner sc = new Scanner(System.in);
 
