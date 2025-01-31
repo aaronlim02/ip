@@ -26,7 +26,7 @@ public class Ui {
      */
     public void showTaskList(TaskList tasks) {
         System.out.println("Here are your tasks:");
-        for (int i = 0; i < tasks.size(); i++) {
+        for (int i = 0; i < tasks.getSize(); i++) {
             System.out.println((i + 1) + "." + tasks.get(i));
         }
     }

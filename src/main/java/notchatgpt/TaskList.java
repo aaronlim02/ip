@@ -25,7 +25,7 @@ public class TaskList {
         tasks.get(index).setStatusIcon(' ');
     }
 
-    public int size() {
+    public int getSize() {
         return tasks.size();
     }
 
