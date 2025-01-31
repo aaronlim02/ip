@@ -1,3 +1,7 @@
+/**
+ * The Task superclass. The subclasses ToDo, Deadline, and Event inherit from this
+ * @param description Description of task
+ */
 package notchatgpt;
 
 public class Task {

@@ -19,6 +19,11 @@ public class Ui {
         System.out.println("Bye. Hope to see you again soon!");
     }
 
+    /**
+     * Iterates across the task list and displays all to the user
+     *
+     * @param tasks List of tasks to show
+     */
     public void showTaskList(TaskList tasks) {
         System.out.println("Here are your tasks:");
         for (int i = 0; i < tasks.size(); i++) {

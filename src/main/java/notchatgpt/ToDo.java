@@ -1,3 +1,7 @@
+/**
+ * Task with no specific dates
+ * @param description Description of task
+ */
 package notchatgpt;
 
 public class ToDo extends Task {

@@ -1,3 +1,10 @@
+/**
+ * Task with a starting and ending date
+ *
+ * @param description Description of task
+ * @param from starting date of task
+ * @param to ending date of task
+ */
 package notchatgpt;
 
 import java.time.LocalDate;

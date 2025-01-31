@@ -1,3 +1,9 @@
+/**
+ * Deals with storage of the tasklist in the drive.
+ * Has the load() and save() methods
+ * @param filename directory of file to load/save
+ */
+
 package notchatgpt;
 
 import java.io.*;

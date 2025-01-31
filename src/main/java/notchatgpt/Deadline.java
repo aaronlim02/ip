@@ -1,3 +1,9 @@
+/**
+ * Task with a specific deadline
+ *
+ * @param description Description of task
+ * @param by Deadline of task
+ */
 package notchatgpt;
 
 import java.time.LocalDate;
