@@ -1,4 +1,7 @@
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.*;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -23,14 +26,14 @@ public class NotChatGPT {
                   line = String.join(";",
                         "D",
                         d.description,
-                        d.by
+                        d.by.toString()
                     );
                 } else if (task instanceof Event e) {
                   line = String.join(";",
                         "E",
                         e.description,
-                        e.from,
-                        e.to
+                        e.from.toString(),
+                        e.to.toString()
                     );
                 }
                 writer.write(line);
@@ -52,9 +55,12 @@ public class NotChatGPT {
                 if (list[0].equals("T")) {
                     tasklist.add(new ToDo(list[1]));
                 } else if (list[0].equals("D")) {
-                    tasklist.add(new Deadline(list[1], list[2]));
+                    LocalDate by = LocalDate.parse(list[2]);
+                    tasklist.add(new Deadline(list[1], by));
                 } else if (list[0].equals("E")) {
-                    tasklist.add(new Event(list[1], list[2], list[3]));
+                    LocalDate from = LocalDate.parse(list[2]);
+                    LocalDate to = LocalDate.parse(list[3]);
+                    tasklist.add(new Event(list[1], from, to));
                 }
             }
         } catch (IOException e) {
@@ -72,6 +78,8 @@ public class NotChatGPT {
         System.out.println("Hello! I'm " + name);
         System.out.println("What can I do for you?");
         System.out.println();
+
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("d/M/yyyy");
         while (true) {
             String echo = sc.nextLine();
             if (echo.equals("bye")) {
@@ -143,11 +151,16 @@ public class NotChatGPT {
                     System.out.println("Could not add Deadline. Due date is required!\n");
                     continue;
                 }
-                Deadline newDeadline = new Deadline(echo.substring(9, byIndex - 1),
-                    echo.substring(byIndex + 4));
-                tasklist.add(newDeadline);
-                System.out.println("Deadline added: " + newDeadline);
-                save(tasklist);
+                try {
+                    Deadline newDeadline = new Deadline(echo.substring(9, byIndex - 1),
+                        LocalDate.parse(echo.substring(byIndex + 4),
+                            dateTimeFormatter));
+                    tasklist.add(newDeadline);
+                    System.out.println("Deadline added: " + newDeadline);
+                    save(tasklist);
+                } catch (DateTimeParseException e) {
+                    System.out.println("Date parse error");
+                }
             } else if (echo.substring(0, Math.min(echo.length(), 5)).equals("event")) {
                 int fromIndex = echo.indexOf("/from");
                 int toIndex = echo.indexOf("/to");
@@ -167,12 +180,18 @@ public class NotChatGPT {
                     System.out.println("Could not add Event. To date is required!\n");
                     continue;
                 }
-                Event newEvent = new Event(echo.substring(6, fromIndex - 1),
-                    echo.substring(fromIndex + 6, toIndex - 1),
-                    echo.substring(toIndex + 4));
-                tasklist.add(newEvent);
-                System.out.println("Event added: " + newEvent);
-                save(tasklist);
+                try {
+                    Event newEvent = new Event(echo.substring(6, fromIndex - 1),
+                        LocalDate.parse(echo.substring(fromIndex + 6, toIndex - 1),
+                            dateTimeFormatter),
+                        LocalDate.parse(echo.substring(toIndex + 4),
+                            dateTimeFormatter));
+                    tasklist.add(newEvent);
+                    System.out.println("Event added: " + newEvent);
+                    save(tasklist);
+                } catch (DateTimeParseException e) {
+                    System.out.println("Date parse error");
+                }
             } else {
                 System.out.println("I don't understand");
             }
@@ -182,5 +201,6 @@ public class NotChatGPT {
         }
 
         System.out.println("Bye. Hope to see you again soon!");
+        //DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
     }
 }
