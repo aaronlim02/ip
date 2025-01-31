@@ -1,3 +1,5 @@
+package notchatgpt;
+
 public class Parser {
     public static boolean isByeCommand(String input) {
         return input.equals("bye");
