@@ -1,202 +1,120 @@
-import java.io.IOException;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.*;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.BufferedReader;
-import java.io.FileReader;
+import java.util.ArrayList;
+
 public class NotChatGPT {
+    private static final String FILENAME = "data.txt";
+    private final Storage storage;
+    private final TaskList tasks;
+    private final Ui ui;
 
-    static String filename = "data.txt";
+    public NotChatGPT() {
+        this.ui = new Ui();
+        this.storage = new Storage(FILENAME);
+        ArrayList<Task> loadedTasks = storage.load();
+        this.tasks = new TaskList(loadedTasks);
+    }
 
-    public static void save(ArrayList<Task> tasklist) {
-        try {
-            BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
-            for (int i = 0; i < tasklist.size(); i++) {
-                Task task = tasklist.get(i);
-                String line = "";
-                if (task instanceof ToDo) {
-                    line = String.join(";",
-                        "T",
-                        task.description
-                    );
-                } else if (task instanceof Deadline d) {
-                  line = String.join(";",
-                        "D",
-                        d.description,
-                        d.by.toString()
-                    );
-                } else if (task instanceof Event e) {
-                  line = String.join(";",
-                        "E",
-                        e.description,
-                        e.from.toString(),
-                        e.to.toString()
-                    );
-                }
-                writer.write(line);
-                writer.newLine();
+    public void run() {
+        ui.showWelcome("Not ChatGPT");
+        boolean isExit = false;
+
+        while (!isExit) {
+            String input = ui.readCommand();
+
+            if (Parser.isByeCommand(input)) {
+                isExit = true;
+                ui.showGoodbye();
+            } else if (Parser.isListCommand(input)) {
+                ui.showTaskList(tasks);
+            } else if (Parser.isDeleteCommand(input)) {
+                handleDelete(input);
+            } else if (Parser.isMarkCommand(input)) {
+                handleMark(input);
+            } else if (Parser.isUnmarkCommand(input)) {
+                handleUnmark(input);
+            } else if (Parser.isTodoCommand(input)) {
+                handleTodo(input);
+            } else if (Parser.isDeadlineCommand(input)) {
+                handleDeadline(input);
+            } else if (Parser.isEventCommand(input)) {
+                handleEvent(input);
+            } else {
+                ui.showError("I don't understand.");
             }
-            writer.flush();
-            System.out.println("Saved to disk.");
-        } catch (IOException e) {
-            System.out.println("Could not save to disk.");
         }
     }
 
-    public static void load(ArrayList<Task> tasklist) {
-        try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
-            String line;
+    private void handleDelete(String input) {
+        try {
+            int index = Parser.parseDeleteIndex(input);
+            Task deletedTask = tasks.delete(index);
+            ui.showMessage("Noted! I've removed:\n  " + deletedTask);
+            storage.save(tasks.getAllTasks());
+        } catch (NumberFormatException | IndexOutOfBoundsException e) {
+            ui.showError("Invalid task number.");
+        }
+    }
 
-            while ((line = reader.readLine()) != null) {
-                String[] list = line.split(";");
-                if (list[0].equals("T")) {
-                    tasklist.add(new ToDo(list[1]));
-                } else if (list[0].equals("D")) {
-                    LocalDate by = LocalDate.parse(list[2]);
-                    tasklist.add(new Deadline(list[1], by));
-                } else if (list[0].equals("E")) {
-                    LocalDate from = LocalDate.parse(list[2]);
-                    LocalDate to = LocalDate.parse(list[3]);
-                    tasklist.add(new Event(list[1], from, to));
-                }
-            }
-        } catch (IOException e) {
-            System.out.println("Error reading file.");
-            e.printStackTrace();
+    private void handleMark(String input) {
+        try {
+            int index = Parser.parseMarkUnmarkIndex(input);
+            tasks.mark(index);
+            ui.showMessage("Nice! I've marked this task as done:\n  " + tasks.get(index));
+            storage.save(tasks.getAllTasks());
+        } catch (NumberFormatException | IndexOutOfBoundsException e) {
+            ui.showError("Invalid task number.");
+        }
+    }
+
+    private void handleUnmark(String input) {
+        try {
+            int index = Parser.parseMarkUnmarkIndex(input);
+            tasks.unmark(index);
+            ui.showMessage("OK, I've marked this task as not done yet:\n  " + tasks.get(index));
+            storage.save(tasks.getAllTasks());
+        } catch (NumberFormatException | IndexOutOfBoundsException e) {
+            ui.showError("Invalid task number.");
+        }
+    }
+
+    private void handleTodo(String input) {
+        if (input.length() <= 5) {
+            ui.showError("Could not add To-do. Description is required!");
+            return;
+        }
+        String description = Parser.parseTodoDescription(input);
+        tasks.add(new ToDo(description));
+        ui.showMessage("To-do added: " + description);
+        storage.save(tasks.getAllTasks());
+    }
+
+    private void handleDeadline(String input) {
+        try {
+            String[] details = Parser.parseDeadlineDetails(input);
+            LocalDate by = LocalDate.parse(details[1]);
+            tasks.add(new Deadline(details[0], by));
+            ui.showMessage("Deadline added: " + details[0]);
+            storage.save(tasks.getAllTasks());
+        } catch (DateTimeParseException | ArrayIndexOutOfBoundsException e) {
+            ui.showError("Invalid deadline format. Use: deadline <desc> /by <yyyy-mm-dd>");
+        }
+    }
+
+    private void handleEvent(String input) {
+        try {
+            String[] details = Parser.parseEventDetails(input);
+            LocalDate from = LocalDate.parse(details[1]);
+            LocalDate to = LocalDate.parse(details[2]);
+            tasks.add(new Event(details[0], from, to));
+            ui.showMessage("Event added: " + details[0]);
+            storage.save(tasks.getAllTasks());
+        } catch (DateTimeParseException | ArrayIndexOutOfBoundsException e) {
+            ui.showError("Invalid event format. Use: event <desc> /from <yyyy-mm-dd> /to <yyyy-mm-dd>");
         }
     }
 
     public static void main(String[] args) {
-        ArrayList<Task> tasklist = new ArrayList<>();
-        load(tasklist);
-        String name = "Not ChatGPT";
-        Scanner sc = new Scanner(System.in);
-
-        System.out.println("Hello! I'm " + name);
-        System.out.println("What can I do for you?");
-        System.out.println();
-
-        while (true) {
-            String echo = sc.nextLine();
-            if (echo.equals("bye")) {
-                break;
-            } else if (echo.equals("list")) {
-                System.out.println("Here are your tasks:");
-                for (int i = 0; i < tasklist.toArray().length; i++) {
-                    System.out.println(i+1 + "." + tasklist.get(i).toString());
-                }
-            } else if (echo.substring(0, Math.min(echo.length(), 6)).equals("delete")) {
-                if (echo.length() < 8) {
-                    System.out.println("Could not delete. Task number is required!\n");
-                    continue;
-                }
-                try {
-                    int id = Integer.parseInt(echo.substring(7)) - 1;
-                    Task t = tasklist.remove(id);
-                    System.out.println("Noted! I've removed:");
-                    System.out.println("  " + t.toString());
-                    save(tasklist);
-                } catch (NumberFormatException e) {
-                    System.out.println("Could not delete. Please check you've entered a number!");
-                }
-            } else if (echo.substring(0, Math.min(echo.length(), 4)).equals("mark")) {
-                if (echo.length() < 6) {
-                    System.out.println("Could not mark. Task number is required!\n");
-                    continue;
-                }
-                try {
-                    int id = Integer.parseInt(echo.substring(5)) - 1;
-                    tasklist.get(id).setStatusIcon('X');
-                    System.out.println("Nice! I've marked this task as done:");
-                    System.out.println("  " + tasklist.get(id).toString());
-                } catch (NumberFormatException e) {
-                    System.out.println("Could not mark. Please check you've entered a number!");
-                }
-
-            } else if (echo.substring(0, Math.min(echo.length(), 6)).equals("unmark")) {
-                if (echo.length() < 8) {
-                    System.out.println("Could not unmark. Please check you've entered a number!\n");
-                    continue;
-                }
-                try {
-                    int id = Integer.parseInt(echo.substring(7)) - 1;
-                    tasklist.get(id).setStatusIcon(' ');
-                    System.out.println("OK, I've marked this task as not done yet:");
-                    System.out.println("  " + tasklist.get(id).toString());
-                } catch (NumberFormatException e) {
-                    System.out.println("Could not unmark. Please enter a task number!");
-                }
-            } else if (echo.substring(0, Math.min(echo.length(), 4)).equals("todo")) {
-                if (echo.length() < 6) {
-                    System.out.println("Could not add To-do. Description is required!\n");
-                    continue;
-                }
-                ToDo newToDo = new ToDo(echo.substring(5));
-                tasklist.add(newToDo);
-                System.out.println("To-do added: " + newToDo);
-                save(tasklist);
-            } else if (echo.substring(0, Math.min(echo.length(), 8)).equals("deadline")) {
-                int byIndex = echo.indexOf("/by");
-                if (byIndex == -1) { // no /by
-                    System.out.println("Could not add Deadline. /by is required!\n");
-                    continue;
-                } else if (byIndex - 9 < 1) { // no description
-                    System.out.println("Could not add Deadline. Description is required!\n");
-                    continue;
-                } else if (echo.length() < byIndex + 5) { // no due date
-                    System.out.println("Could not add Deadline. Due date is required!\n");
-                    continue;
-                }
-                try {
-                    Deadline newDeadline = new Deadline(echo.substring(9, byIndex - 1),
-                        LocalDate.parse(echo.substring(byIndex + 4)));
-                    tasklist.add(newDeadline);
-                    System.out.println("Deadline added: " + newDeadline);
-                    save(tasklist);
-                } catch (DateTimeParseException e) {
-                    System.out.println("Date parse error");
-                }
-            } else if (echo.substring(0, Math.min(echo.length(), 5)).equals("event")) {
-                int fromIndex = echo.indexOf("/from");
-                int toIndex = echo.indexOf("/to");
-                if (fromIndex == -1) {
-                    System.out.println("Could not add Event. /from is required!\n");
-                    continue;
-                } else if (toIndex == -1) {
-                    System.out.println("Could not add Event. /to is required!\n");
-                    continue;
-                } else if (fromIndex - 6 < 1) { // no description
-                    System.out.println("Could not add Event. Description is required!\n");
-                    continue;
-                } else if (toIndex - fromIndex - 6 < 1) { // no from date
-                    System.out.println("Could not add Event. From date is required!\n");
-                    continue;
-                } else if (echo.length() < toIndex + 5) { // no to date
-                    System.out.println("Could not add Event. To date is required!\n");
-                    continue;
-                }
-                try {
-                    Event newEvent = new Event(echo.substring(6, fromIndex - 1),
-                        LocalDate.parse(echo.substring(fromIndex + 6, toIndex - 1)),
-                        LocalDate.parse(echo.substring(toIndex + 4)));
-                    tasklist.add(newEvent);
-                    System.out.println("Event added: " + newEvent);
-                    save(tasklist);
-                } catch (DateTimeParseException e) {
-                    System.out.println("Date parse error");
-                }
-            } else {
-                System.out.println("I don't understand");
-            }
-
-            System.out.println();
-
-        }
-
-        System.out.println("Bye. Hope to see you again soon!");
-        //DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        new NotChatGPT().run();
     }
 }
