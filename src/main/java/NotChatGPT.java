@@ -79,7 +79,6 @@ public class NotChatGPT {
         System.out.println("What can I do for you?");
         System.out.println();
 
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("d/M/yyyy");
         while (true) {
             String echo = sc.nextLine();
             if (echo.equals("bye")) {
@@ -153,8 +152,7 @@ public class NotChatGPT {
                 }
                 try {
                     Deadline newDeadline = new Deadline(echo.substring(9, byIndex - 1),
-                        LocalDate.parse(echo.substring(byIndex + 4),
-                            dateTimeFormatter));
+                        LocalDate.parse(echo.substring(byIndex + 4)));
                     tasklist.add(newDeadline);
                     System.out.println("Deadline added: " + newDeadline);
                     save(tasklist);
@@ -182,10 +180,8 @@ public class NotChatGPT {
                 }
                 try {
                     Event newEvent = new Event(echo.substring(6, fromIndex - 1),
-                        LocalDate.parse(echo.substring(fromIndex + 6, toIndex - 1),
-                            dateTimeFormatter),
-                        LocalDate.parse(echo.substring(toIndex + 4),
-                            dateTimeFormatter));
+                        LocalDate.parse(echo.substring(fromIndex + 6, toIndex - 1)),
+                        LocalDate.parse(echo.substring(toIndex + 4)));
                     tasklist.add(newEvent);
                     System.out.println("Event added: " + newEvent);
                     save(tasklist);
