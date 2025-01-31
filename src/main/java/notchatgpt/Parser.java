@@ -62,4 +62,12 @@ public class Parser {
         String to = parts[2].trim();
         return new String[]{description, from, to};
     }
+
+    public static boolean isFindCommand(String input) {
+        return input.startsWith("find");
+    }
+
+    public static String parseFindCommand(String input) {
+        return input.substring(5).trim();
+    }
 }

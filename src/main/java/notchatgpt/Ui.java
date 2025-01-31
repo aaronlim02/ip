@@ -20,12 +20,13 @@ public class Ui {
     }
 
     /**
-     * Iterates across the task list and displays all to the user
+     * Iterates across the task list and generates a list to display all to the user
      *
+     * @param title Title of the displayed list
      * @param tasks List of tasks to show
      */
-    public void showTaskList(TaskList tasks) {
-        System.out.println("Here are your tasks:");
+    public void showTaskList(String title, TaskList tasks) {
+        System.out.println(title);
         for (int i = 0; i < tasks.getSize(); i++) {
             System.out.println((i + 1) + "." + tasks.get(i));
         }
