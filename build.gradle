@@ -28,11 +28,17 @@ test {
 }
 
 application {
-    mainClass.set("seedu.duke.Duke")
+    mainClass.set("notchatgpt.NotChatGPT")
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'notchatgpt.NotChatGPT'
+    }
 }
 
 shadowJar {
-    archiveBaseName = "duke"
+    archiveBaseName = "NotChatGPT"
     archiveClassifier = null
 }
 
