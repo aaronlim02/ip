@@ -28,7 +28,7 @@ public class NotChatGPT {
                 isExit = true;
                 ui.showGoodbye();
             } else if (Parser.isListCommand(input)) {
-                ui.showTaskList(tasks);
+                ui.showTaskList("Here are your tasks: ", tasks);
             } else if (Parser.isDeleteCommand(input)) {
                 handleDelete(input);
             } else if (Parser.isMarkCommand(input)) {
@@ -41,9 +41,31 @@ public class NotChatGPT {
                 handleDeadline(input);
             } else if (Parser.isEventCommand(input)) {
                 handleEvent(input);
+            } else if (Parser.isFindCommand(input)) {
+                handleFind(input);
             } else {
                 ui.showError("I don't understand.");
             }
+        }
+    }
+
+    private void handleFind(String input) {
+        if (input.length() <= 5) {
+            ui.showError("Could not find. Target is required!");
+            return;
+        }
+        String target = Parser.parseFindCommand(input);
+        TaskList matchingTasks = new TaskList(new ArrayList<Task>());
+        for (int i = 0; i < tasks.size(); i++) {
+            Task task = tasks.get(i);
+            if (task.getDescription().contains(target)) {
+                matchingTasks.add(task);
+            }
+        }
+        if (matchingTasks.size() == 0) {
+            ui.showMessage("No tasks found.");
+        } else {
+            ui.showTaskList("Tasks found: ", matchingTasks);
         }
     }
 

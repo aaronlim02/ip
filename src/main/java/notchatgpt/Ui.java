@@ -19,8 +19,8 @@ public class Ui {
         System.out.println("Bye. Hope to see you again soon!");
     }
 
-    public void showTaskList(TaskList tasks) {
-        System.out.println("Here are your tasks:");
+    public void showTaskList(String title, TaskList tasks) {
+        System.out.println(title);
         for (int i = 0; i < tasks.size(); i++) {
             System.out.println((i + 1) + "." + tasks.get(i));
         }
