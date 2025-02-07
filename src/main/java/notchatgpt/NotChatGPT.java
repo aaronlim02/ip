@@ -9,7 +9,6 @@ public class NotChatGPT {
     private final Storage storage;
     private final TaskList tasks;
     private final Ui ui;
-    private boolean hasJustStartedUp = true;
 
     public NotChatGPT() {
         this.ui = new Ui();
@@ -18,13 +17,13 @@ public class NotChatGPT {
         this.tasks = new TaskList(loadedTasks);
     }
 
-    public String getResponse(String input) {
-        if (hasJustStartedUp) {
-            ui.showWelcome("Not ChatGPT");
-            hasJustStartedUp = false;
-        }
+    public static String showWelcome() {
+        return "Hello! I'm NotChatGPT\nWhat can I do for you?\n";
+    }
 
-        String processedInput = ui.readCommand(input);
+    public String getResponse(String rawInput) {
+
+        String input = ui.readCommand(rawInput);
         String output;
 
         if (Parser.isByeCommand(input)) {
@@ -154,10 +153,4 @@ public class NotChatGPT {
         }
         return output;
     }
-    /*
-    public static void main(String[] args) {
-        new NotChatGPT().run();
-    }
-
-    */
 }

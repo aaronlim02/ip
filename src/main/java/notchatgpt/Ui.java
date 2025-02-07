@@ -25,9 +25,9 @@ public class Ui {
      */
     public String showTaskList(String title, TaskList tasks) {
         StringBuilder sb = new StringBuilder();
-        sb.append(title + "\n");
+        sb.append(title);
         for (int i = 0; i < tasks.getSize(); i++) {
-            sb.append((i + 1) + "." + tasks.get(i));
+            sb.append("\n" + (i + 1) + "." + tasks.get(i));
         }
         return sb.toString();
     }
