@@ -5,18 +5,16 @@ import java.util.Scanner;
 public class Ui {
     private Scanner sc = new Scanner(System.in);
 
-    public String readCommand() {
-        return sc.nextLine().trim();
+    public String readCommand(String s) {
+        return s.trim();
     }
 
-    public void showWelcome(String name) {
-        System.out.println("Hello! I'm " + name);
-        System.out.println("What can I do for you?");
-        System.out.println();
+    public String showWelcome(String name) {
+        return "Hello! I'm " + name + "\n" + "What can I do for you?\n";
     }
 
-    public void showGoodbye() {
-        System.out.println("Bye. Hope to see you again soon!");
+    public String showGoodbye() {
+        return "Bye. Hope to see you again soon!";
     }
 
     /**
@@ -25,18 +23,20 @@ public class Ui {
      * @param title Title of the displayed list
      * @param tasks List of tasks to show
      */
-    public void showTaskList(String title, TaskList tasks) {
-        System.out.println(title);
+    public String showTaskList(String title, TaskList tasks) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(title + "\n");
         for (int i = 0; i < tasks.getSize(); i++) {
-            System.out.println((i + 1) + "." + tasks.get(i));
+            sb.append((i + 1) + "." + tasks.get(i));
         }
+        return sb.toString();
     }
 
-    public void showError(String message) {
-        System.out.println(message);
+    public String showError(String message) {
+        return message;
     }
 
-    public void showMessage(String message) {
-        System.out.println(message);
+    public String showMessage(String message) {
+        return message;
     }
 }
