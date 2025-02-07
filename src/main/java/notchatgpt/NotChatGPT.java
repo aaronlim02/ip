@@ -17,42 +17,44 @@ public class NotChatGPT {
         this.tasks = new TaskList(loadedTasks);
     }
 
-    public void run() {
-        ui.showWelcome("Not ChatGPT");
-        boolean isExit = false;
-
-        while (!isExit) {
-            String input = ui.readCommand();
-
-            if (Parser.isByeCommand(input)) {
-                isExit = true;
-                ui.showGoodbye();
-            } else if (Parser.isListCommand(input)) {
-                ui.showTaskList("Here are your tasks: ", tasks);
-            } else if (Parser.isDeleteCommand(input)) {
-                handleDelete(input);
-            } else if (Parser.isMarkCommand(input)) {
-                handleMark(input);
-            } else if (Parser.isUnmarkCommand(input)) {
-                handleUnmark(input);
-            } else if (Parser.isTodoCommand(input)) {
-                handleTodo(input);
-            } else if (Parser.isDeadlineCommand(input)) {
-                handleDeadline(input);
-            } else if (Parser.isEventCommand(input)) {
-                handleEvent(input);
-            } else if (Parser.isFindCommand(input)) {
-                handleFind(input);
-            } else {
-                ui.showError("I don't understand.");
-            }
-        }
+    public static String showWelcome() {
+        return "Hello! I'm NotChatGPT\nWhat can I do for you?\n";
     }
 
-    private void handleFind(String input) {
+    public String getResponse(String rawInput) {
+
+        String input = ui.readCommand(rawInput);
+        String output;
+
+        if (Parser.isByeCommand(input)) {
+            output = ui.showGoodbye();
+        } else if (Parser.isListCommand(input)) {
+            output = ui.showTaskList("Here are your tasks: ", tasks);
+        } else if (Parser.isDeleteCommand(input)) {
+            output = handleDelete(input);
+        } else if (Parser.isMarkCommand(input)) {
+            output = handleMark(input);
+        } else if (Parser.isUnmarkCommand(input)) {
+            output = handleUnmark(input);
+        } else if (Parser.isTodoCommand(input)) {
+            output = handleTodo(input);
+        } else if (Parser.isDeadlineCommand(input)) {
+            output = handleDeadline(input);
+        } else if (Parser.isEventCommand(input)) {
+            output = handleEvent(input);
+        } else if (Parser.isFindCommand(input)) {
+            output = handleFind(input);
+        } else {
+            output = ui.showError("I don't understand.");
+        }
+        return output;
+    }
+
+    private String handleFind(String input) {
+        String output;
         if (input.length() <= 5) {
-            ui.showError("Could not find. Target is required!");
-            return;
+            output = ui.showError("Could not find. Target is required!");
+            return output;
         }
         String target = Parser.parseFindCommand(input);
         TaskList matchingTasks = new TaskList(new ArrayList<Task>());
@@ -63,82 +65,92 @@ public class NotChatGPT {
             }
         }
         if (matchingTasks.getSize() == 0) {
-            ui.showMessage("No tasks found.");
+            output = ui.showMessage("No tasks found.");
         } else {
-            ui.showTaskList("Tasks found: ", matchingTasks);
+            output = ui.showTaskList("Tasks found: ", matchingTasks);
         }
+        return output;
     }
 
-    private void handleDelete(String input) {
+    private String handleDelete(String input) {
+        String output;
         try {
             int index = Parser.parseDeleteIndex(input);
             Task deletedTask = tasks.delete(index);
-            ui.showMessage("Noted! I've removed:\n  " + deletedTask);
+            output = ui.showMessage("Noted! I've removed:\n  " + deletedTask);
             storage.save(tasks.getAllTasks());
         } catch (NumberFormatException | IndexOutOfBoundsException e) {
-            ui.showError("Invalid task number.");
+            output = ui.showError("Invalid task number.");
         }
+        return output;
     }
 
-    private void handleMark(String input) {
+    private String handleMark(String input) {
+        String output;
         try {
             int index = Parser.parseMarkUnmarkIndex(input);
             tasks.mark(index);
-            ui.showMessage("Nice! I've marked this task as done:\n  " + tasks.get(index));
+            output = ui.showMessage("Nice! I've marked this task as done:\n  " + tasks.get(index));
             storage.save(tasks.getAllTasks());
         } catch (NumberFormatException | IndexOutOfBoundsException e) {
-            ui.showError("Invalid task number.");
+            output = ui.showError("Invalid task number.");
         }
+        return output;
     }
 
-    private void handleUnmark(String input) {
+    private String handleUnmark(String input) {
+        String output;
         try {
             int index = Parser.parseMarkUnmarkIndex(input);
             tasks.unmark(index);
-            ui.showMessage("OK, I've marked this task as not done yet:\n  " + tasks.get(index));
+            output = ui.showMessage("OK, I've marked this task as not done yet:\n  " + tasks.get(index));
             storage.save(tasks.getAllTasks());
         } catch (NumberFormatException | IndexOutOfBoundsException e) {
-            ui.showError("Invalid task number.");
+            output = ui.showError("Invalid task number.");
         }
+        return output;
     }
 
-    private void handleTodo(String input) {
+    private String handleTodo(String input) {
+        String output;
         if (input.length() <= 5) {
-            ui.showError("Could not add To-do. Description is required!");
-            return;
+            output = ui.showError("Could not add To-do. Description is required!");
+            return output;
         }
         String description = Parser.parseTodoDescription(input);
         tasks.add(new ToDo(description));
-        ui.showMessage("To-do added: " + description);
+        output = ui.showMessage("To-do added: " + description);
         storage.save(tasks.getAllTasks());
+        return output;
     }
 
-    private void handleDeadline(String input) {
+    private String handleDeadline(String input) {
+        String output;
         try {
             String[] details = Parser.parseDeadlineDetails(input);
             LocalDate by = LocalDate.parse(details[1]);
             tasks.add(new Deadline(details[0], by));
-            ui.showMessage("Deadline added: " + details[0]);
+            output = ui.showMessage("Deadline added: " + details[0]);
             storage.save(tasks.getAllTasks());
         } catch (DateTimeParseException | ArrayIndexOutOfBoundsException e) {
-            ui.showError("Invalid deadline format. Use: deadline <desc> /by <yyyy-mm-dd>");
+            output = ui.showError("Invalid deadline format. Use: deadline <desc> /by <yyyy-mm-dd>");
+            return output;
         }
+        return output;
     }
 
-    private void handleEvent(String input) {
+    private String handleEvent(String input) {
+        String output;
         try {
             String[] details = Parser.parseEventDetails(input);
             LocalDate from = LocalDate.parse(details[1]);
             LocalDate to = LocalDate.parse(details[2]);
             tasks.add(new Event(details[0], from, to));
-            ui.showMessage("Event added: " + details[0]);
+            output = ui.showMessage("Event added: " + details[0]);
             storage.save(tasks.getAllTasks());
         } catch (DateTimeParseException | ArrayIndexOutOfBoundsException e) {
-            ui.showError("Invalid event format. Use: event <desc> /from <yyyy-mm-dd> /to <yyyy-mm-dd>");
+            output = ui.showError("Invalid event format. Use: event <desc> /from <yyyy-mm-dd> /to <yyyy-mm-dd>");
         }
-    }
-
-    public static void main(String[] args) {
-        new NotChatGPT().run();
+        return output;
     }
 }
