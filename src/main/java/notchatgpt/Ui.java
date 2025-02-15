@@ -5,7 +5,10 @@ import java.util.Scanner;
 public class Ui {
     private Scanner sc = new Scanner(System.in);
 
-    public String readCommand(String s) {
+    public String readCommand(String s) throws AssertionError {
+        assert s != null : "Command cannot be null";
+        assert !s.trim().isEmpty() : "Command cannot be empty";
+
         return s.trim();
     }
 
