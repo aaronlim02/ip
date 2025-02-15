@@ -23,12 +23,7 @@ public class NotChatGPT {
 
     public String getResponse(String rawInput) {
 
-        String input;
-        try {
-            input = ui.readCommand(rawInput);
-        } catch (AssertionError e) {
-            return ui.showError("Command cannot be empty");
-        }
+        String input = ui.readCommand(rawInput);
         String output;
 
         if (Parser.isByeCommand(input)) {
