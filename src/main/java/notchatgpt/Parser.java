@@ -70,4 +70,24 @@ public class Parser {
     public static String parseFindCommand(String input) {
         return input.substring(5).trim();
     }
+
+    public static boolean isUpdateCommand(String input) {
+        return input.startsWith("update");
+    }
+
+    public static String[] parseUpdateDetails(String rawInput) {
+        String input = rawInput.substring(7).trim();
+        String id = input.substring(0, input.indexOf(' '));
+        String parameter = input.substring(input.indexOf(' ') + 1);
+        if (parameter.startsWith("/desc")) {
+            return new String[]{id, "desc", parameter.substring(6)};
+        } else if (parameter.startsWith("/from")) {
+            return new String[]{id, "from", parameter.substring(6)};
+        } else if (parameter.startsWith("/to")) {
+            return new String[]{id, "to", parameter.substring(4)};
+        } else if (parameter.startsWith("/by")) {
+            return new String[]{id, "by", parameter.substring(4)};
+        }
+        return new String[]{};
+    }
 }

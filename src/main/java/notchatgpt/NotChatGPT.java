@@ -3,6 +3,8 @@ package notchatgpt;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class NotChatGPT {
     private static final String FILENAME = "data.txt";
@@ -49,10 +51,56 @@ public class NotChatGPT {
             output = handleEvent(input);
         } else if (Parser.isFindCommand(input)) {
             output = handleFind(input);
+        } else if (Parser.isUpdateCommand(input)) {
+            output = handleUpdate(input);
         } else {
             output = ui.showError("I don't understand.");
         }
         return output;
+    }
+    @SuppressWarnings("checkstyle:OperatorWrap")
+    private String handleUpdate(String input) {
+        String output;
+        if (input.length() <= 7) {
+            output = ui.showError("Could not update. Target is required! "
+                    + "Usage: update <id> /<parameter> <content>");
+            return output;
+        }
+        Task editTask;
+        try {
+            String[] parts = Parser.parseUpdateDetails(input);
+            int id = Integer.parseInt(parts[0]) - 1;
+            editTask = tasks.get(id);
+            ArrayList<String> editables = new ArrayList<>();
+            if (editTask instanceof ToDo) {
+                editables = new ArrayList<String>(List.of("desc"));
+            } else if (editTask instanceof Deadline) {
+                editables = new ArrayList<String>(Arrays.asList("desc", "by"));
+            } else if (editTask instanceof Event) {
+                editables = new ArrayList<String>(Arrays.asList("desc", "from", "to"));
+            }
+            if (!editables.contains(parts[1])) {
+                return "Task does not support parameter: " + parts[1];
+            } else if (parts[1].equals("desc")) {
+                editTask.description = parts[2];
+            } else if (parts[1].equals("by")) {
+                assert editTask instanceof Deadline;
+                ((Deadline) editTask).by = LocalDate.parse(parts[2]);
+            } else if (parts[1].equals("from")) {
+                assert editTask instanceof Event;
+                ((Event) editTask).from = LocalDate.parse(parts[2]);
+            } else if (parts[1].equals("to")) {
+                assert editTask instanceof Event;
+                ((Event) editTask).to = LocalDate.parse(parts[2]);
+            }
+        } catch (IndexOutOfBoundsException | NumberFormatException e) {
+            return "Unable to parse command. Usage: update <id> /<parameter> <content>";
+        } catch (DateTimeParseException e) {
+            output = ui.showError("Invalid date format. Use: deadline <desc> /by <yyyy-mm-dd>");
+            return output;
+        }
+        storage.save(tasks.getAllTasks());
+        return "Task has been edited to: " + editTask;
     }
 
     private String handleFind(String input) {
