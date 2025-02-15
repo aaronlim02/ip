@@ -96,7 +96,7 @@ public class NotChatGPT {
         } catch (IndexOutOfBoundsException | NumberFormatException e) {
             return "Unable to parse command. Usage: update <id> /<parameter> <content>";
         } catch (DateTimeParseException e) {
-            output = ui.showError("Invalid date format. Use: deadline <desc> /by <yyyy-mm-dd>");
+            output = ui.showError("Invalid date format. Use: <yyyy-mm-dd>");
             return output;
         }
         storage.save(tasks.getAllTasks());
@@ -179,6 +179,10 @@ public class NotChatGPT {
 
     private String handleDeadline(String input) {
         String output;
+        if (input.length() <= 9) {
+            output = ui.showError("Could not add Deadline. Description is required!");
+            return output;
+        }
         try {
             String[] details = Parser.parseDeadlineDetails(input);
             LocalDate by = LocalDate.parse(details[1]);
@@ -194,6 +198,10 @@ public class NotChatGPT {
 
     private String handleEvent(String input) {
         String output;
+        if (input.length() <= 6) {
+            output = ui.showError("Could not add Event. Description is required!");
+            return output;
+        }
         try {
             String[] details = Parser.parseEventDetails(input);
             LocalDate from = LocalDate.parse(details[1]);
