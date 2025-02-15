@@ -24,7 +24,8 @@ public class Storage {
 
     public ArrayList<Task> load() {
         ArrayList<Task> tasks = new ArrayList<>();
-        try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(filename));
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split(";");
@@ -52,7 +53,8 @@ public class Storage {
     }
 
     public void save(List<Task> tasks) {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename))) {
+        try {
+            BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
             for (Task task : tasks) {
                 String line = "";
                 if (task instanceof ToDo) {
