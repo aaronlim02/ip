@@ -4,6 +4,8 @@
 
 Stay organized effortlessly with NotChatGPT, your personal to-do list chatbot! Designed to help you manage your tasks seamlessly, this chatbot allows you to add, track, update, and complete tasks with simple commands—just like chatting with a friend.
 
+- [Adding deadlines](#adding-deadlines).
+
 ## Adding deadlines
 
 // Describe the action and its outcome.
