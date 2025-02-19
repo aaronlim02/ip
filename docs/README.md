@@ -4,7 +4,18 @@
 
 Stay organized effortlessly with NotChatGPT, your personal to-do list chatbot! Designed to help you manage your tasks seamlessly, this chatbot allows you to add, track, update, and complete tasks with simple commands—just like chatting with a friend.
 
-- [Adding deadlines](#adding-deadlines).
+- [Features](#features)
+    - [Help : `help`](#help--help)
+    - [Exit the Chatbot : `bye`](#exit-the-chatbot--bye)
+    - [View All Tasks : `list`](#view-all-tasks--list)
+    - [Delete a Task : `delete`](#delete-a-task--delete)
+    - [Mark a Task as Complete : `mark`](#mark-a-task-as-complete--mark)
+    - [Unmark a Completed Task : `unmark`](#unmark-a-completed-task--unmark)
+    - [Add a To-Do Task : `todo`](#add-a-to-do-task--todo)
+    - [Add a Deadline : `deadline`](#add-a-deadline--deadline)
+    - [Add an Event : `event`](#add-an-event--event)
+    - [Find a Task : `find`](#find-a-task--find)
+    - [Update a Task : `update`](#update-a-task--update)
 
 ## Quick start
 
