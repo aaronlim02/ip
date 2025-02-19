@@ -63,7 +63,7 @@ public class NotChatGPT {
         String output;
         if (input.length() <= 7) {
             output = ui.showError("Could not update. Target is required! "
-                    + "Usage: update <id> /<parameter> <content>");
+                    + "Use: update <id> /<parameter> <content>");
             return output;
         }
         Task editTask;
@@ -94,7 +94,7 @@ public class NotChatGPT {
                 ((Event) editTask).to = LocalDate.parse(parts[2]);
             }
         } catch (IndexOutOfBoundsException | NumberFormatException e) {
-            return "Unable to parse command. Usage: update <id> /<parameter> <content>";
+            return "Unable to parse command. Use: update <id> /<parameter> <content>";
         } catch (DateTimeParseException e) {
             output = ui.showError("Invalid date format. Use: <yyyy-mm-dd>");
             return output;
@@ -106,7 +106,7 @@ public class NotChatGPT {
     private String handleFind(String input) {
         String output;
         if (input.length() <= 5) {
-            output = ui.showError("Could not find. Target is required!");
+            output = ui.showError("Could not find. Target is required! Use: find <target phrase>");
             return output;
         }
         String target = Parser.parseFindCommand(input);
@@ -133,7 +133,7 @@ public class NotChatGPT {
             output = ui.showMessage("Noted! I've removed:\n  " + deletedTask);
             storage.save(tasks.getAllTasks());
         } catch (NumberFormatException | IndexOutOfBoundsException e) {
-            output = ui.showError("Invalid task number.");
+            output = ui.showError("Invalid task number. Use: delete <id>");
         }
         return output;
     }
@@ -146,7 +146,7 @@ public class NotChatGPT {
             output = ui.showMessage("Nice! I've marked this task as done:\n  " + tasks.get(index));
             storage.save(tasks.getAllTasks());
         } catch (NumberFormatException | IndexOutOfBoundsException e) {
-            output = ui.showError("Invalid task number.");
+            output = ui.showError("Invalid task number. Use: mark <id>");
         }
         return output;
     }
@@ -159,7 +159,7 @@ public class NotChatGPT {
             output = ui.showMessage("OK, I've marked this task as not done yet:\n  " + tasks.get(index));
             storage.save(tasks.getAllTasks());
         } catch (NumberFormatException | IndexOutOfBoundsException e) {
-            output = ui.showError("Invalid task number.");
+            output = ui.showError("Invalid task number. Use: unmark <id>");
         }
         return output;
     }
@@ -167,7 +167,7 @@ public class NotChatGPT {
     private String handleTodo(String input) {
         String output;
         if (input.length() <= 5) {
-            output = ui.showError("Could not add To-do. Description is required!");
+            output = ui.showError("Could not add To-do. Description is required! Use: todo <desc>");
             return output;
         }
         String description = Parser.parseTodoDescription(input);
@@ -180,7 +180,8 @@ public class NotChatGPT {
     private String handleDeadline(String input) {
         String output;
         if (input.length() <= 9) {
-            output = ui.showError("Could not add Deadline. Description is required!");
+            output = ui.showError("Could not add Deadline. Description is required!"
+                    + "Use: deadline <desc> /by <yyyy-mm-dd>");
             return output;
         }
         try {
@@ -199,7 +200,8 @@ public class NotChatGPT {
     private String handleEvent(String input) {
         String output;
         if (input.length() <= 6) {
-            output = ui.showError("Could not add Event. Description is required!");
+            output = ui.showError("Could not add Event. Description is required!"
+                    + "Use: event <desc> /from <yyyy-mm-dd> /to <yyyy-mm-dd>");
             return output;
         }
         try {

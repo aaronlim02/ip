@@ -1,10 +1,8 @@
-# Duke User Guide
+# NotChatGPT User Guide
 
-// Update the title above to match the actual product name
+![NotChatGPT representative screenshot](Ui.png)
 
-// Product screenshot goes here
-
-// Product intro goes here
+Stay organized effortlessly with NotChatGPT, your personal to-do list chatbot! Designed to help you manage your tasks seamlessly, this chatbot allows you to add, track, update, and complete tasks with simple commands—just like chatting with a friend.
 
 ## Adding deadlines
 
