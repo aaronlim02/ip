@@ -1,5 +1,6 @@
 package notchatgpt;
 
+@SuppressWarnings("checkstyle:Regexp")
 public class Parser {
     public static boolean isByeCommand(String input) {
         return input.equals("bye");
@@ -89,5 +90,9 @@ public class Parser {
             return new String[]{id, "by", parameter.substring(4)};
         }
         return new String[]{};
+    }
+
+    public static boolean isHelpCommand(String input) {
+        return input.equals("help");
     }
 }

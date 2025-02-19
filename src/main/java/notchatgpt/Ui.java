@@ -35,6 +35,10 @@ public class Ui {
         return sb.toString();
     }
 
+    public String showHelp() {
+        return "Available commands: bye, list, delete, mark, unmark, todo, deadline, event, find, update, help";
+    }
+
     public String showError(String message) {
         return message;
     }

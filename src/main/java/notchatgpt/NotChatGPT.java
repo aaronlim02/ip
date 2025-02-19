@@ -53,6 +53,8 @@ public class NotChatGPT {
             output = handleFind(input);
         } else if (Parser.isUpdateCommand(input)) {
             output = handleUpdate(input);
+        } else if (Parser.isHelpCommand(input)) {
+            output = ui.showHelp();
         } else {
             output = ui.showError("I don't understand.");
         }
