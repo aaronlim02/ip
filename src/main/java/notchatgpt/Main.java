@@ -15,6 +15,11 @@ public class Main extends Application {
 
     private NotChatGPT notChatGPT = new NotChatGPT();
 
+    /**
+     * Starts the JavaFX application and sets up the main window.
+     *
+     * @param stage The primary stage for this application.
+     */
     @Override
     public void start(Stage stage) {
         try {

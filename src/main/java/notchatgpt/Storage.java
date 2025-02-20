@@ -18,10 +18,20 @@ import java.util.List;
 public class Storage {
     private String filename;
 
+    /**
+     * Constructs a Storage object with the specified filename.
+     *
+     * @param filename Path to the file used for storing tasks.
+     */
     public Storage(String filename) {
         this.filename = filename;
     }
 
+    /**
+     * Loads tasks from the file.
+     *
+     * @return A list of tasks loaded from the file.
+     */
     public ArrayList<Task> load() {
         ArrayList<Task> tasks = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
@@ -51,6 +61,11 @@ public class Storage {
         return tasks;
     }
 
+    /**
+     * Saves the current list of tasks to the file.
+     *
+     * @param tasks The list of tasks to be saved.
+     */
     public void save(List<Task> tasks) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename))) {
             for (Task task : tasks) {

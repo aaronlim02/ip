@@ -25,6 +25,11 @@ public class MainWindow extends AnchorPane {
     private Image userImage = new Image(this.getClass().getResourceAsStream("/images/User.png"));
     private Image dukeImage = new Image(this.getClass().getResourceAsStream("/images/Chatbot.png"));
 
+    /**
+     * Initializes the main window.
+     * Binds the scroll pane to the height of the dialog container
+     * and displays the welcome message from the chatbot.
+     */
     @FXML
     public void initialize() {
         scrollPane.vvalueProperty().bind(dialogContainer.heightProperty());
@@ -33,14 +38,20 @@ public class MainWindow extends AnchorPane {
         );
     }
 
-    /** Injects the instance */
+    /**
+     * Sets the NotChatGPT instance for the main window.
+     *
+     * @param c The NotChatGPT instance to be used.
+     */
     public void setNotChatGPT(NotChatGPT c) {
         notChatGPT = c;
     }
 
+
     /**
-     * Creates two dialog boxes, one echoing user input and the other containing Duke's reply and then appends them to
-     * the dialog container. Clears the user input after processing.
+     * Handles user input by creating dialog boxes for the user and chatbot responses.
+     * The user input is processed and displayed in the dialog container,
+     * then cleared from the input field.
      */
     @FXML
     private void handleUserInput() {

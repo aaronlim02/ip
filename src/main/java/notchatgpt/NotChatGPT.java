@@ -12,6 +12,9 @@ public class NotChatGPT {
     private final TaskList tasks;
     private final Ui ui;
 
+    /**
+     * Constructs a new NotChatGPT instance, initializing UI, storage, and task list.
+     */
     public NotChatGPT() {
         this.ui = new Ui();
         this.storage = new Storage(FILENAME);
@@ -19,10 +22,21 @@ public class NotChatGPT {
         this.tasks = new TaskList(loadedTasks);
     }
 
+    /**
+     * Returns a welcome message when the application starts.
+     *
+     * @return A greeting message.
+     */
     public static String showWelcome() {
         return "Hello! I'm NotChatGPT\nWhat can I do for you?\n";
     }
 
+    /**
+     * Processes user input and returns an appropriate response.
+     *
+     * @param rawInput The raw input string from the user.
+     * @return A response message based on the input command.
+     */
     public String getResponse(String rawInput) {
 
         String input;

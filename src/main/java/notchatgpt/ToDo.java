@@ -1,16 +1,31 @@
 /**
- * Task with no specific dates
- * @param description Description of task
+ * Task with no specific dates.
+ * This class represents a "To Do" task that does not have any specific start or due dates.
+ *
+ * @param description Description of the task.
  */
 package notchatgpt;
 
 public class ToDo extends Task {
-  public ToDo(String description) {
-    super(description);
-  }
 
-  @Override
-  public String toString() {
-    return "[T]" + super.toString();
-  }
+    /**
+     * Constructor for the ToDo class.
+     * Initializes the "To Do" task with the given description.
+     *
+     * @param description Description of the task.
+     */
+    public ToDo(String description) {
+        super(description);
+    }
+
+    /**
+     * Returns a string representation of the "To Do" task.
+     * The string format is "[T]" followed by the string representation of the task from the superclass.
+     *
+     * @return A string representing the "To Do" task.
+     */
+    @Override
+    public String toString() {
+        return "[T]" + super.toString();
+    }
 }
